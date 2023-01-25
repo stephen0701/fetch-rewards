@@ -150,10 +150,10 @@ if __name__ == "__main__":
         if (len(data)):
             postgres.write(data, "user_logins")
 
-        postgres_cur = postgres.psql_conn.cursor()
-        postgres_cur.execute(sql.SQL(f"SELECT count(*), count(distinct(user_id)), count(distinct(masked_ip)), count(distinct(masked_device_id)) FROM user_logins LIMIT 100;"))
-        res = postgres_cur.fetchall()
-        print(res)
+        # postgres_cur = postgres.psql_conn.cursor()
+        # postgres_cur.execute(sql.SQL(f"SELECT count(*), count(distinct(user_id)), count(distinct(masked_ip)), count(distinct(masked_device_id)) FROM user_logins LIMIT 100;"))
+        # res = postgres_cur.fetchall()
+        # print(res)
 
         messages = sqs.receive_messages("/000000000000/login-queue")
     
