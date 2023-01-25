@@ -8,7 +8,7 @@
 ```pip3 install -r requirements.txt```
 
 4. Run the application  
-```python3 starter.py```  
+```python3 main.py```  
 <br/>
 
 # Development decisions
