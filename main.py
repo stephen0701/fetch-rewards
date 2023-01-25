@@ -24,7 +24,7 @@ class SQS:
             messages = self.sqs_client.receive_message(
                 QueueUrl=query_url,
                 MaxNumberOfMessages=10,
-                WaitTimeSeconds=30,
+                WaitTimeSeconds=10,
             )
 
             user_data = []
@@ -132,23 +132,31 @@ class Postgres():
 
 if __name__ == "__main__":
 
+    print("connecting to SQS...")
     sqs = SQS()
     sqs.connect()
+    print("SQS connected.")
+
     mask = Mask()
+
+    print("connecting to Postgres...");
     postgres = Postgres()
     postgres.connect()
+    print("Postgres connected.")
 
     if (not path.exists("mask.key")):
         mask.gen_key()
 
     # see if there is a blocking function to wait for the messages
     messages = sqs.receive_messages("/000000000000/login-queue")
+    print("A batch of SQS messages received.")
     while(len(messages)):
         data = mask.mask_msg(messages)
 
         # Should check data integrity before writing
         if (len(data)):
             postgres.write(data, "user_logins")
+            print("The data is written into Postgres")
 
         # postgres_cur = postgres.psql_conn.cursor()
         # postgres_cur.execute(sql.SQL(f"SELECT count(*), count(distinct(user_id)), count(distinct(masked_ip)), count(distinct(masked_device_id)) FROM user_logins LIMIT 100;"))
@@ -156,5 +164,9 @@ if __name__ == "__main__":
         # print(res)
 
         messages = sqs.receive_messages("/000000000000/login-queue")
+        print("A batch of SQS messages received.")
     
+    print("No messages exist in SQS")
     postgres.close()
+    print("Close the connection to Postgres")
+    print("Bye...")
